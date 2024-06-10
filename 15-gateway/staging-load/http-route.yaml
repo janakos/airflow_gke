@@ -1,0 +1,21 @@
+kind: HTTPRoute
+apiVersion: gateway.networking.k8s.io/v1beta1
+metadata:
+  name: staging-load-external
+  namespace: staging-load
+  labels:
+    gateway: external-http
+spec:
+  parentRefs:
+  - name: external-http
+    namespace: gateway
+  hostnames:
+  - "af-staging.iguana.com"
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /load
+    backendRefs:
+    - name: airflow-webserver
+      port: 8080

@@ -1,0 +1,39 @@
+config:
+  webserver:
+    base_url: "/primary"
+  logging:
+    remote_base_log_folder: gs://iguana-airflow-staging/staging-primary/logs
+
+scheduler:
+  extraContainers:
+    - name: dag-sync
+      image: 'us-central1-docker.pkg.dev/iguana-staging/airflow-gke/dag_sync:latest'
+      volumeMounts:
+        - name: dags
+          mountPath: /opt/airflow/dags
+        - name: plugins
+          mountPath: /opt/airflow/plugins
+      env:
+        - name: DAG_BUCKET
+          value: iguana-airflow-staging
+        - name: DAG_SYNC_INTERVAL
+          value: '300'
+        - name: PATH_PREFIX
+          value: staging-primary
+
+workers:
+  extraContainers:
+    - name: dag-sync
+      image: 'us-central1-docker.pkg.dev/iguana-staging/airflow-gke/dag_sync:latest'
+      volumeMounts:
+        - name: dags
+          mountPath: /opt/airflow/dags
+        - name: plugins
+          mountPath: /opt/airflow/plugins
+      env:
+        - name: DAG_BUCKET
+          value: iguana-airflow-staging
+        - name: DAG_SYNC_INTERVAL
+          value: '300'
+        - name: PATH_PREFIX
+          value: staging-primary

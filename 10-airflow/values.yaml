@@ -1,0 +1,171 @@
+# Versioning
+airflowVersion: "2.7.3"
+defaultAirflowRepository: "us-central1-docker.pkg.dev/iguana-staging/airflow-gke/airflow"
+defaultAirflowTag: "stable"
+images:
+  airflow:
+    pullPolicy: Always
+
+# Enable smooth HELM chart usage via terraform
+createUserJob:
+  useHelmHooks: false
+  applyCustomEnv: false
+migrateDatabaseJob:
+  useHelmHooks: false
+  applyCustomEnv: false
+
+# Environment Variables
+env:
+  - name: "AIRFLOW_DATA_EXTRACT_BUCKET_PATH"
+    value: "gs://iguana-staging-extracts"
+  - name: "ENVIRONMENT_TYPE"
+    value: "staging"
+
+# Airflow general config
+config:
+  core:
+    parallelism: 500
+    max_active_runs_per_dag: 1
+    max_active_tasks_per_dag: 250
+    dagbag_import_timeout: 239
+    dag_file_processor_timeout: 240
+  database:
+    sql_alchemy_pool_size: 100
+    sql_alchemy_max_overflow: 50
+  celery:
+    worker_concurrency: 40
+  scheduler:
+    parsing_processes: 32
+    min_file_process_interval: 300
+    max_dagruns_per_loop_to_schedule: 50
+    task_queued_timeout: 1200
+  webserver:
+    expose_config: true
+    enable_proxy_fix: true
+    workers: 16
+    web_server_master_timeout: 360
+    web_server_worker_timeout: 360
+    reload_on_plugin_change: true
+    show_trigger_form_if_no_params: true
+  logging:
+    remote_logging: True
+    remote_log_conn_id: google_cloud_default
+  api:
+    auth_backends: airflow.api.auth.backend.basic_auth
+
+# Component configurations
+webserver:
+  replicas: 1
+  livenessProbe:
+    timeoutSeconds: 20
+  resources:
+    requests:
+      cpu: 8000m
+      memory: 16Gi
+  serviceAccount:
+    create: true
+    name: gke-access-webserver
+    annotations:
+      iam.gke.io/gcp-service-account: iguana-composer-staging@iguana-staging.iam.gserviceaccount.com
+
+scheduler:
+  replicas: 2
+  livenessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 120
+    failureThreshold: 20
+    periodSeconds: 60
+    command:
+      - sh
+      - -c
+      - |
+        CONNECTION_CHECK_MAX_COUNT=0 AIRFLOW__LOGGING__LOGGING_LEVEL=ERROR exec /entrypoint \
+        airflow jobs check
+  resources:
+    requests:
+      cpu: 16000m
+      memory: 16Gi
+  serviceAccount:
+    create: true
+    name: gke-access-scheduler
+    annotations:
+      iam.gke.io/gcp-service-account: iguana-composer-staging@iguana-staging.iam.gserviceaccount.com
+  extraVolumes:
+    - name: dags
+      emptyDir: {} # If PVC, might run into issues. ext4 FS
+    - name: plugins
+      emptyDir: {} # If PVC, might run into issues. ext4 FS
+  extraVolumeMounts:
+    - name: dags
+      mountPath: /opt/airflow/dags
+    - name: plugins
+      mountPath: /opt/airflow/plugins
+
+
+workers:
+  replicas: 6
+  resources:
+    requests:
+      cpu: 30000m
+      memory: 30Gi
+  serviceAccount:
+    create: true
+    name: gke-access-worker
+    annotations:
+      iam.gke.io/gcp-service-account: iguana-composer-staging@iguana-staging.iam.gserviceaccount.com
+  extraVolumes:
+    - name: dags
+      emptyDir: {} # If PVC, might run into issues. ext4 FS
+    - name: plugins
+      emptyDir: {} # If PVC, might run into issues. ext4 FS
+  extraVolumeMounts:
+    - name: dags
+      mountPath: /opt/airflow/dags
+    - name: plugins
+      mountPath: /opt/airflow/plugins
+  extraContainers:
+    - name: dag-sync
+      image: 'us-central1-docker.pkg.dev/iguana-staging/airflow-gke/dag_sync:latest'
+      volumeMounts:
+        - name: dags
+          mountPath: /opt/airflow/dags
+        - name: plugins
+          mountPath: /opt/airflow/plugins
+      env:
+        - name: DAG_BUCKET
+          value: iguana-airflow-staging
+        - name: DAG_SYNC_INTERVAL
+          value: '300'
+
+flower:
+  enabled: true
+
+postgresql:
+  enabled: false
+
+data:
+  metadataConnection:
+    user: postgres
+    protocol: postgresql
+    port: 5432
+    db: postgres
+
+redis:
+  resources:
+    requests:
+      cpu: 4000m
+      memory: 4Gi
+
+triggerer:
+  resources:
+    requests:
+      cpu: 4000m
+      memory: 4Gi
+
+secret:
+  - envName: GOOGLE_OAUTH2_CLIENT_ID
+    secretKey: GOOGLE_OAUTH2_CLIENT_ID
+    secretName: airflow-oidc-secret
+  - envName: GOOGLE_OAUTH2_SECRET
+    secretKey: GOOGLE_OAUTH2_SECRET
+    secretName: airflow-oidc-secret

@@ -1,0 +1,21 @@
+kind: Gateway
+apiVersion: gateway.networking.k8s.io/v1beta1
+metadata:
+  name: external-http
+  namespace: gateway
+spec:
+  gatewayClassName: gke-l7-global-external-managed
+  listeners:
+  - name: https
+    protocol: HTTPS
+    port: 443
+    allowedRoutes:
+      namespaces:
+        from: Selector
+        selector:
+          matchLabels:
+            shared-gateway-access: "true"
+    tls:
+      mode: Terminate
+      options:
+        networking.gke.io/pre-shared-certs: af-staging-iguana-com

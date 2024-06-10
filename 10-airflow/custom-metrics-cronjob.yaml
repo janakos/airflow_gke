@@ -1,0 +1,63 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: custom-metrics
+  namespace: staging-primary
+spec:
+  schedule: "*/10 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: custom-metrics
+              image: 'us-central1-docker.pkg.dev/iguana-staging/airflow-gke/custom-metrics:latest'
+              env:
+              - name: NEW_RELIC_LICENSE_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: new-relic-license-key
+                    key: data
+              - name: NAMESPACE
+                value: staging-primary
+              - name: CLUSTER_NAME
+                value: airflow-stage
+              - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
+                valueFrom:
+                  secretKeyRef:
+                    name: airflow-metadata
+                    key: connection
+              imagePullPolicy: Always
+          restartPolicy: OnFailure
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: custom-metrics
+  namespace: staging-load
+spec:
+  schedule: "*/10 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: custom-metrics
+              image: 'us-central1-docker.pkg.dev/iguana-staging/airflow-gke/custom-metrics:latest'
+              env:
+                - name: NEW_RELIC_LICENSE_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: new-relic-license-key
+                      key: data
+                - name: NAMESPACE
+                  value: staging-load
+                - name: CLUSTER_NAME
+                  value: airflow-stage
+                - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
+                  valueFrom:
+                    secretKeyRef:
+                      name: airflow-metadata
+                      key: connection
+              imagePullPolicy: Always
+          restartPolicy: OnFailure

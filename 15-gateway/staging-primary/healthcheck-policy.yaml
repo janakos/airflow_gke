@@ -1,0 +1,16 @@
+apiVersion: networking.gke.io/v1
+kind: HealthCheckPolicy
+metadata:
+  name: staging-primary-webserver-healthcheck
+  namespace: staging-primary
+spec:
+  default:
+    config:
+      type: HTTP
+      httpHealthCheck:
+        port: 8080
+        requestPath: /primary/health
+  targetRef:
+    group: ""
+    kind: Service
+    name: airflow-webserver

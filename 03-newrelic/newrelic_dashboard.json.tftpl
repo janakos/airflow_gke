@@ -1,0 +1,1801 @@
+{
+  "name": "Airflow Staging Cluster",
+  "description": null,
+  "permissions": "PUBLIC_READ_WRITE",
+  "pages": [
+    {
+      "name": "Airflow Metrics",
+      "description": null,
+      "widgets": [
+        {
+          "title": "DagBag Size",
+          "layout": {
+            "column": 1,
+            "row": 1,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "legend": {
+              "enabled": true
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  3032839
+                ],
+                "query": "SELECT latest(airflow_dagbag_size) FROM Metric WHERE cluster_name = '${cluster}' AND namespace = {{namespace}} TIMESERIES"
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            },
+            "thresholds": {
+              "isLabelVisible": true
+            },
+            "yAxisLeft": {
+              "zero": true
+            },
+            "yAxisRight": {
+              "zero": true
+            }
+          }
+        },
+        {
+          "title": "DAG Import Errors",
+          "layout": {
+            "column": 5,
+            "row": 1,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "legend": {
+              "enabled": true
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  3032839
+                ],
+                "query": "SELECT latest(airflow_dag_processing_import_errors) FROM Metric WHERE cluster_name = '${cluster}' AND namespace = {{namespace}} TIMESERIES"
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            },
+            "thresholds": {
+              "isLabelVisible": true
+            },
+            "yAxisLeft": {
+              "zero": true
+            },
+            "yAxisRight": {
+              "zero": true
+            }
+          }
+        },
+        {
+          "title": "Total DAG Parse Time",
+          "layout": {
+            "column": 9,
+            "row": 1,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "legend": {
+              "enabled": true
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  3032839
+                ],
+                "query": "SELECT latest(airflow_dag_processing_total_parse_time) FROM Metric WHERE (clusterName = '${cluster}' OR cluster_name = '${cluster}' OR `k8s.cluster.name` = '${cluster}') AND namespace = {{namespace}} TIMESERIES"
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            },
+            "thresholds": {
+              "isLabelVisible": true
+            },
+            "yAxisLeft": {
+              "zero": true
+            },
+            "yAxisRight": {
+              "zero": true
+            }
+          }
+        },
+        {
+          "title": "Task Overview",
+          "layout": {
+            "column": 5,
+            "row": 4,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "legend": {
+              "enabled": true
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  3032839
+                ],
+                "query": "SELECT latest(airflow_executor_queued_tasks) FROM Metric WHERE cluster_name = '${cluster}' AND namespace = {{namespace}} TIMESERIES  "
+              },
+              {
+                "accountIds": [
+                  3032839
+                ],
+                "query": "SELECT latest(airflow_executor_running_tasks) FROM Metric WHERE cluster_name = '${cluster}' AND namespace = {{namespace}} TIMESERIES  "
+              },
+              {
+                "accountIds": [
+                  3032839
+                ],
+                "query": "SELECT latest(airflow_pool_deferred_slots) FROM Metric WHERE cluster_name = '${cluster}' AND namespace = {{namespace}} TIMESERIES  "
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            },
+            "thresholds": {
+              "isLabelVisible": true
+            },
+            "yAxisLeft": {
+              "zero": true
+            },
+            "yAxisRight": {
+              "zero": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Worker",
+      "description": null,
+      "widgets": [
+        {
+          "title": "CPU usage (cores)",
+          "layout": {
+            "column": 1,
+            "row": 1,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT average(cpuUsedCores) AS `CPU usage (cores)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-worker-0')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "COUNT"
+            }
+          }
+        },
+        {
+          "title": "CPU utilization",
+          "layout": {
+            "column": 5,
+            "row": 1,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT (average(cpuCoresUtilization) / 100) AS `CPU utilization (%)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-worker-0')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "PERCENTAGE"
+            }
+          }
+        },
+        {
+          "title": "CPU throttling",
+          "layout": {
+            "column": 9,
+            "row": 1,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT (sum(containerCpuCfsThrottledPeriodsDelta) / sum(containerCpuCfsPeriodsDelta)) AS `CPU throttling (%)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-worker-0')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "PERCENTAGE"
+            }
+          }
+        },
+        {
+          "title": "Memory usage",
+          "layout": {
+            "column": 1,
+            "row": 4,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT average(memoryWorkingSetBytes) AS `Memory usage (bytes)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-worker-0')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": []
+          }
+        },
+        {
+          "title": "Memory utilization",
+          "layout": {
+            "column": 5,
+            "row": 4,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT (average(memoryWorkingSetUtilization) / 100) AS `Memory utilization (%)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-worker-0')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "PERCENTAGE"
+            }
+          }
+        },
+        {
+          "title": "Container Resources",
+          "layout": {
+            "column": 9,
+            "row": 4,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.table"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "from(SELECT latest(if(NOT (memoryRequestedBytes IS NULL), memoryRequestedBytes / 1024 / 1024, 'Not Set')) AS `mr`, latest(if(NOT (memoryLimitBytes IS NULL), memoryLimitBytes / 1024 / 1024, 'Not Set')) AS `ml`, latest(if(NOT (cpuRequestedCores IS NULL), cpuRequestedCores, 'Not Set')) AS `cr`, latest(if(NOT (cpuLimitCores IS NULL), cpuLimitCores, 'Not Set')) AS `cl`, sum(restartCountDelta) AS `rcd`, latest(restartCount) AS `rcc`, latest(status) AS `status`, latest(reason) AS `reason` FROM K8sContainerSample WHERE clusterName = '${cluster}' AND namespaceName = {{namespace}} AND podName = 'airflow-worker-0' FACET containerName AS `containername`) select latest(mr) as 'Mem Req (MiB)', latest(ml) as 'Mem Limit (MiB)', latest(cr) as 'CPU Req (cores)', latest(cl) as 'CPU Limit (cores)', latest(concat(string(rcd, precision: 1), ' / ', string(rcc, precision: 1))) as 'Restarts (delta / cumul.)', latest(concat(status, ' / ', if(reason is null, 'None', reason))) as 'Status / Reason' facet containername as 'Container'"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Filesystem usage",
+          "layout": {
+            "column": 1,
+            "row": 7,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT max(fsUsedBytes) AS `Filesystem usage (bytes)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-worker-0')) FACET tuple(podName, containerName) LIMIT 100 TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "BYTES"
+            }
+          }
+        },
+        {
+          "title": "Filesystem utilization",
+          "layout": {
+            "column": 5,
+            "row": 7,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT (max(fsUsedPercent) / 100) AS `Filesystem utilization (%)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-worker-0')) FACET tuple(podName, containerName) LIMIT 100 TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "PERCENTAGE"
+            }
+          }
+        },
+        {
+          "title": "Restart count",
+          "layout": {
+            "column": 9,
+            "row": 7,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT sum(restartCountDelta) AS `Restart count` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-worker-0')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "COUNT"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Scheduler",
+      "description": null,
+      "widgets": [
+        {
+          "title": "CPU usage (cores)",
+          "layout": {
+            "column": 1,
+            "row": 1,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT average(cpuUsedCores) AS `CPU usage (cores)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND ( podName RLIKE 'airflow-scheduler-.*')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "COUNT"
+            }
+          }
+        },
+        {
+          "title": "CPU utilization",
+          "layout": {
+            "column": 5,
+            "row": 1,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT (average(cpuCoresUtilization) / 100) AS `CPU utilization (%)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND ( podName RLIKE 'airflow-scheduler-.*')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "PERCENTAGE"
+            }
+          }
+        },
+        {
+          "title": "CPU throttling",
+          "layout": {
+            "column": 9,
+            "row": 1,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT (sum(containerCpuCfsThrottledPeriodsDelta) / sum(containerCpuCfsPeriodsDelta)) AS `CPU throttling (%)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND ( podName RLIKE 'airflow-scheduler-.*')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "PERCENTAGE"
+            }
+          }
+        },
+        {
+          "title": "Memory usage",
+          "layout": {
+            "column": 1,
+            "row": 4,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT average(memoryWorkingSetBytes) AS `Memory usage (bytes)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND ( podName RLIKE 'airflow-scheduler-.*')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": []
+          }
+        },
+        {
+          "title": "Memory utilization",
+          "layout": {
+            "column": 5,
+            "row": 4,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT (average(memoryWorkingSetUtilization) / 100) AS `Memory utilization (%)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND ( podName RLIKE 'airflow-scheduler-.*')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "PERCENTAGE"
+            }
+          }
+        },
+        {
+          "title": "Container Resources",
+          "layout": {
+            "column": 9,
+            "row": 4,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.table"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "from(SELECT latest(if(NOT (memoryRequestedBytes IS NULL), memoryRequestedBytes / 1024 / 1024, 'Not Set')) AS `mr`, latest(if(NOT (memoryLimitBytes IS NULL), memoryLimitBytes / 1024 / 1024, 'Not Set')) AS `ml`, latest(if(NOT (cpuRequestedCores IS NULL), cpuRequestedCores, 'Not Set')) AS `cr`, latest(if(NOT (cpuLimitCores IS NULL), cpuLimitCores, 'Not Set')) AS `cl`, sum(restartCountDelta) AS `rcd`, latest(restartCount) AS `rcc`, latest(status) AS `status`, latest(reason) AS `reason` FROM K8sContainerSample WHERE clusterName = '${cluster}' AND namespaceName = {{namespace}} AND  podName RLIKE 'airflow-scheduler-.*' FACET containerName AS `containername`) select latest(mr) as 'Mem Req (MiB)', latest(ml) as 'Mem Limit (MiB)', latest(cr) as 'CPU Req (cores)', latest(cl) as 'CPU Limit (cores)', latest(concat(string(rcd, precision: 1), ' / ', string(rcc, precision: 1))) as 'Restarts (delta / cumul.)', latest(concat(status, ' / ', if(reason is null, 'None', reason))) as 'Status / Reason' facet containername as 'Container'"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Filesystem utilization",
+          "layout": {
+            "column": 1,
+            "row": 7,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT (max(fsUsedPercent) / 100) AS `Filesystem utilization (%)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND ( podName RLIKE 'airflow-scheduler-.*')) FACET tuple(podName, containerName) LIMIT 100 TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "PERCENTAGE"
+            }
+          }
+        },
+        {
+          "title": "Filesystem usage",
+          "layout": {
+            "column": 5,
+            "row": 7,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT max(fsUsedBytes) AS `Filesystem usage (bytes)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND ( podName RLIKE 'airflow-scheduler-.*')) FACET tuple(podName, containerName) LIMIT 100 TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "BYTES"
+            }
+          }
+        },
+        {
+          "title": "Restart count",
+          "layout": {
+            "column": 9,
+            "row": 7,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT sum(restartCountDelta) AS `Restart count` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND ( podName RLIKE 'airflow-scheduler-.*')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "COUNT"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Triggerer",
+      "description": null,
+      "widgets": [
+        {
+          "title": "Blocking triggers",
+          "layout": {
+            "column": 1,
+            "row": 1,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "legend": {
+              "enabled": true
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  3032839
+                ],
+                "query": "SELECT sum(airflow_triggers_blocked_main_thread) FROM Metric WHERE (clusterName = '${cluster}' OR cluster_name = '${cluster}' OR `k8s.cluster.name` = '${cluster}' AND namespace = {{namespace}}) TIMESERIES"
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            },
+            "thresholds": {
+              "isLabelVisible": true
+            },
+            "yAxisLeft": {
+              "zero": true
+            },
+            "yAxisRight": {
+              "zero": true
+            }
+          }
+        },
+        {
+          "title": "Running triggers",
+          "layout": {
+            "column": 5,
+            "row": 1,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "legend": {
+              "enabled": true
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  3032839
+                ],
+                "query": "SELECT sum(airflow_triggers_running) FROM Metric WHERE (clusterName = '${cluster}' OR cluster_name = '${cluster}' OR `k8s.cluster.name` = '${cluster}') AND namespace = {{namespace}} TIMESERIES"
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            },
+            "thresholds": {
+              "isLabelVisible": true
+            },
+            "yAxisLeft": {
+              "zero": true
+            },
+            "yAxisRight": {
+              "zero": true
+            }
+          }
+        },
+        {
+          "title": "Container Resources",
+          "layout": {
+            "column": 9,
+            "row": 1,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.table"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "from(SELECT latest(if(NOT (memoryRequestedBytes IS NULL), memoryRequestedBytes / 1024 / 1024, 'Not Set')) AS `mr`, latest(if(NOT (memoryLimitBytes IS NULL), memoryLimitBytes / 1024 / 1024, 'Not Set')) AS `ml`, latest(if(NOT (cpuRequestedCores IS NULL), cpuRequestedCores, 'Not Set')) AS `cr`, latest(if(NOT (cpuLimitCores IS NULL), cpuLimitCores, 'Not Set')) AS `cl`, sum(restartCountDelta) AS `rcd`, latest(restartCount) AS `rcc`, latest(status) AS `status`, latest(reason) AS `reason` FROM K8sContainerSample WHERE clusterName = '${cluster}' AND namespaceName = {{namespace}} AND podName = 'airflow-triggerer-0' FACET containerName AS `containername`) select latest(mr) as 'Mem Req (MiB)', latest(ml) as 'Mem Limit (MiB)', latest(cr) as 'CPU Req (cores)', latest(cl) as 'CPU Limit (cores)', latest(concat(string(rcd, precision: 1), ' / ', string(rcc, precision: 1))) as 'Restarts (delta / cumul.)', latest(concat(status, ' / ', if(reason is null, 'None', reason))) as 'Status / Reason' facet containername as 'Container'"
+              }
+            ]
+          }
+        },
+        {
+          "title": "CPU usage (cores)",
+          "layout": {
+            "column": 1,
+            "row": 4,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT average(cpuUsedCores) AS `CPU usage (cores)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-triggerer-0')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "COUNT"
+            }
+          }
+        },
+        {
+          "title": "CPU utilization",
+          "layout": {
+            "column": 5,
+            "row": 4,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT (average(cpuCoresUtilization) / 100) AS `CPU utilization (%)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-triggerer-0')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "PERCENTAGE"
+            }
+          }
+        },
+        {
+          "title": "CPU throttling",
+          "layout": {
+            "column": 9,
+            "row": 4,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT (sum(containerCpuCfsThrottledPeriodsDelta) / sum(containerCpuCfsPeriodsDelta)) AS `CPU throttling (%)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-triggerer-0')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "PERCENTAGE"
+            }
+          }
+        },
+        {
+          "title": "Memory usage",
+          "layout": {
+            "column": 1,
+            "row": 7,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT average(memoryWorkingSetBytes) AS `Memory usage (bytes)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-triggerer-0')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": []
+          }
+        },
+        {
+          "title": "Memory utilization",
+          "layout": {
+            "column": 5,
+            "row": 7,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT (average(memoryWorkingSetUtilization) / 100) AS `Memory utilization (%)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-triggerer-0')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "PERCENTAGE"
+            }
+          }
+        },
+        {
+          "title": "Restart count",
+          "layout": {
+            "column": 9,
+            "row": 7,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT sum(restartCountDelta) AS `Restart count` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-triggerer-0')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "COUNT"
+            }
+          }
+        },
+        {
+          "title": "Filesystem utilization",
+          "layout": {
+            "column": 1,
+            "row": 10,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT (max(fsUsedPercent) / 100) AS `Filesystem utilization (%)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-triggerer-0')) FACET tuple(podName, containerName) LIMIT 100 TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "PERCENTAGE"
+            }
+          }
+        },
+        {
+          "title": "Filesystem usage",
+          "layout": {
+            "column": 5,
+            "row": 10,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT max(fsUsedBytes) AS `Filesystem usage (bytes)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-triggerer-0')) FACET tuple(podName, containerName) LIMIT 100 TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "BYTES"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Database",
+      "description": null,
+      "widgets": [
+        {
+          "title": "CPU throttling",
+          "layout": {
+            "column": 1,
+            "row": 1,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT (sum(containerCpuCfsThrottledPeriodsDelta) / sum(containerCpuCfsPeriodsDelta)) AS `CPU throttling (%)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-postgres-0')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "PERCENTAGE"
+            }
+          }
+        },
+        {
+          "title": "CPU usage (cores)",
+          "layout": {
+            "column": 5,
+            "row": 1,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT average(cpuUsedCores) AS `CPU usage (cores)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-postgres-0')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "COUNT"
+            }
+          }
+        },
+        {
+          "title": "CPU utilization",
+          "layout": {
+            "column": 9,
+            "row": 1,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT (average(cpuCoresUtilization) / 100) AS `CPU utilization (%)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-postgres-0')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "PERCENTAGE"
+            }
+          }
+        },
+        {
+          "title": "Container Resources",
+          "layout": {
+            "column": 1,
+            "row": 4,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.table"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "from(SELECT latest(if(NOT (memoryRequestedBytes IS NULL), memoryRequestedBytes / 1024 / 1024, 'Not Set')) AS `mr`, latest(if(NOT (memoryLimitBytes IS NULL), memoryLimitBytes / 1024 / 1024, 'Not Set')) AS `ml`, latest(if(NOT (cpuRequestedCores IS NULL), cpuRequestedCores, 'Not Set')) AS `cr`, latest(if(NOT (cpuLimitCores IS NULL), cpuLimitCores, 'Not Set')) AS `cl`, sum(restartCountDelta) AS `rcd`, latest(restartCount) AS `rcc`, latest(status) AS `status`, latest(reason) AS `reason` FROM K8sContainerSample WHERE clusterName = '${cluster}' AND namespaceName = {{namespace}} AND podName = 'airflow-postgres-0' FACET containerName AS `containername`) select latest(mr) as 'Mem Req (MiB)', latest(ml) as 'Mem Limit (MiB)', latest(cr) as 'CPU Req (cores)', latest(cl) as 'CPU Limit (cores)', latest(concat(string(rcd, precision: 1), ' / ', string(rcc, precision: 1))) as 'Restarts (delta / cumul.)', latest(concat(status, ' / ', if(reason is null, 'None', reason))) as 'Status / Reason' facet containername as 'Container'"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Memory utilization",
+          "layout": {
+            "column": 5,
+            "row": 4,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT (average(memoryWorkingSetUtilization) / 100) AS `Memory utilization (%)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-postgres-0')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "PERCENTAGE"
+            }
+          }
+        },
+        {
+          "title": "Memory usage",
+          "layout": {
+            "column": 9,
+            "row": 4,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT average(memoryWorkingSetBytes) AS `Memory usage (bytes)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-postgres-0')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": []
+          }
+        },
+        {
+          "title": "Filesystem usage",
+          "layout": {
+            "column": 1,
+            "row": 7,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT max(fsUsedBytes) AS `Filesystem usage (bytes)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-postgres-0')) FACET tuple(podName, containerName) LIMIT 100 TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "BYTES"
+            }
+          }
+        },
+        {
+          "title": "Filesystem utilization",
+          "layout": {
+            "column": 5,
+            "row": 7,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT (max(fsUsedPercent) / 100) AS `Filesystem utilization (%)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-postgres-0')) FACET tuple(podName, containerName) LIMIT 100 TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "PERCENTAGE"
+            }
+          }
+        },
+        {
+          "title": "Restart count",
+          "layout": {
+            "column": 9,
+            "row": 7,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT sum(restartCountDelta) AS `Restart count` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-postgres-0')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "COUNT"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Web Server",
+      "description": null,
+      "widgets": [
+        {
+          "title": "CPU usage (cores)",
+          "layout": {
+            "column": 1,
+            "row": 1,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "legend": {
+              "enabled": true
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  3032839
+                ],
+                "query": "SELECT average(cpuUsedCores) AS `CPU usage (cores)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName RLIKE 'airflow-webserver-.*')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            },
+            "thresholds": {
+              "isLabelVisible": true
+            },
+            "units": {
+              "unit": "COUNT"
+            },
+            "yAxisLeft": {
+              "zero": true
+            },
+            "yAxisRight": {
+              "zero": true
+            }
+          }
+        },
+        {
+          "title": "CPU utilization",
+          "layout": {
+            "column": 5,
+            "row": 1,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "legend": {
+              "enabled": true
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  3032839
+                ],
+                "query": "SELECT (average(cpuCoresUtilization) / 100) AS `CPU utilization (%)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName RLIKE 'airflow-webserver-.*')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            },
+            "thresholds": {
+              "isLabelVisible": true
+            },
+            "units": {
+              "unit": "PERCENTAGE"
+            },
+            "yAxisLeft": {
+              "zero": true
+            },
+            "yAxisRight": {
+              "zero": true
+            }
+          }
+        },
+        {
+          "title": "CPU throttling",
+          "layout": {
+            "column": 9,
+            "row": 1,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "legend": {
+              "enabled": true
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  3032839
+                ],
+                "query": "SELECT (sum(containerCpuCfsThrottledPeriodsDelta) / sum(containerCpuCfsPeriodsDelta)) AS `CPU throttling (%)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName RLIKE 'airflow-webserver-.*')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            },
+            "thresholds": {
+              "isLabelVisible": true
+            },
+            "units": {
+              "unit": "PERCENTAGE"
+            },
+            "yAxisLeft": {
+              "zero": true
+            },
+            "yAxisRight": {
+              "zero": true
+            }
+          }
+        },
+        {
+          "title": "Memory usage",
+          "layout": {
+            "column": 1,
+            "row": 4,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT average(memoryWorkingSetBytes) AS `Memory usage (bytes)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND ( podName RLIKE 'airflow-webserver-.*')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": []
+          }
+        },
+        {
+          "title": "Memory utilization",
+          "layout": {
+            "column": 5,
+            "row": 4,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT (average(memoryWorkingSetUtilization) / 100) AS `Memory utilization (%)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND ( podName RLIKE 'airflow-webserver-.*')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "PERCENTAGE"
+            }
+          }
+        },
+        {
+          "title": "Container Resources",
+          "layout": {
+            "column": 9,
+            "row": 4,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.table"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "from(SELECT latest(if(NOT (memoryRequestedBytes IS NULL), memoryRequestedBytes / 1024 / 1024, 'Not Set')) AS `mr`, latest(if(NOT (memoryLimitBytes IS NULL), memoryLimitBytes / 1024 / 1024, 'Not Set')) AS `ml`, latest(if(NOT (cpuRequestedCores IS NULL), cpuRequestedCores, 'Not Set')) AS `cr`, latest(if(NOT (cpuLimitCores IS NULL), cpuLimitCores, 'Not Set')) AS `cl`, sum(restartCountDelta) AS `rcd`, latest(restartCount) AS `rcc`, latest(status) AS `status`, latest(reason) AS `reason` FROM K8sContainerSample WHERE clusterName = '${cluster}' AND namespaceName = {{namespace}} AND  podName RLIKE 'airflow-webserver-.*' FACET containerName AS `containername`) select latest(mr) as 'Mem Req (MiB)', latest(ml) as 'Mem Limit (MiB)', latest(cr) as 'CPU Req (cores)', latest(cl) as 'CPU Limit (cores)', latest(concat(string(rcd, precision: 1), ' / ', string(rcc, precision: 1))) as 'Restarts (delta / cumul.)', latest(concat(status, ' / ', if(reason is null, 'None', reason))) as 'Status / Reason' facet containername as 'Container'"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Filesystem usage",
+          "layout": {
+            "column": 1,
+            "row": 7,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT max(fsUsedBytes) AS `Filesystem usage (bytes)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND ( podName RLIKE 'airflow-webserver-.*')) FACET tuple(podName, containerName) LIMIT 100 TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "BYTES"
+            }
+          }
+        },
+        {
+          "title": "Filesystem utilization",
+          "layout": {
+            "column": 5,
+            "row": 7,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT (max(fsUsedPercent) / 100) AS `Filesystem utilization (%)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND ( podName RLIKE 'airflow-webserver-.*')) FACET tuple(podName, containerName) LIMIT 100 TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "PERCENTAGE"
+            }
+          }
+        },
+        {
+          "title": "Restart count",
+          "layout": {
+            "column": 9,
+            "row": 7,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT sum(restartCountDelta) AS `Restart count` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND ( podName RLIKE 'airflow-webserver-.*')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "COUNT"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Redis",
+      "description": null,
+      "widgets": [
+        {
+          "title": "CPU throttling",
+          "layout": {
+            "column": 1,
+            "row": 1,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT (sum(containerCpuCfsThrottledPeriodsDelta) / sum(containerCpuCfsPeriodsDelta)) AS `CPU throttling (%)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-redis-0')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "PERCENTAGE"
+            }
+          }
+        },
+        {
+          "title": "CPU usage (cores)",
+          "layout": {
+            "column": 5,
+            "row": 1,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT average(cpuUsedCores) AS `CPU usage (cores)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-redis-0')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "COUNT"
+            }
+          }
+        },
+        {
+          "title": "CPU utilization",
+          "layout": {
+            "column": 9,
+            "row": 1,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT (average(cpuCoresUtilization) / 100) AS `CPU utilization (%)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-redis-0')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "PERCENTAGE"
+            }
+          }
+        },
+        {
+          "title": "Container Resources",
+          "layout": {
+            "column": 1,
+            "row": 4,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.table"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "from(SELECT latest(if(NOT (memoryRequestedBytes IS NULL), memoryRequestedBytes / 1024 / 1024, 'Not Set')) AS `mr`, latest(if(NOT (memoryLimitBytes IS NULL), memoryLimitBytes / 1024 / 1024, 'Not Set')) AS `ml`, latest(if(NOT (cpuRequestedCores IS NULL), cpuRequestedCores, 'Not Set')) AS `cr`, latest(if(NOT (cpuLimitCores IS NULL), cpuLimitCores, 'Not Set')) AS `cl`, sum(restartCountDelta) AS `rcd`, latest(restartCount) AS `rcc`, latest(status) AS `status`, latest(reason) AS `reason` FROM K8sContainerSample WHERE clusterName = '${cluster}' AND namespaceName = {{namespace}} AND podName = 'airflow-redis-0' FACET containerName AS `containername`) select latest(mr) as 'Mem Req (MiB)', latest(ml) as 'Mem Limit (MiB)', latest(cr) as 'CPU Req (cores)', latest(cl) as 'CPU Limit (cores)', latest(concat(string(rcd, precision: 1), ' / ', string(rcc, precision: 1))) as 'Restarts (delta / cumul.)', latest(concat(status, ' / ', if(reason is null, 'None', reason))) as 'Status / Reason' facet containername as 'Container'"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Memory usage",
+          "layout": {
+            "column": 5,
+            "row": 4,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT average(memoryWorkingSetBytes) AS `Memory usage (bytes)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-redis-0')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": []
+          }
+        },
+        {
+          "title": "Memory utilization",
+          "layout": {
+            "column": 9,
+            "row": 4,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT (average(memoryWorkingSetUtilization) / 100) AS `Memory utilization (%)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-redis-0')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "PERCENTAGE"
+            }
+          }
+        },
+        {
+          "title": "Filesystem usage",
+          "layout": {
+            "column": 1,
+            "row": 7,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT max(fsUsedBytes) AS `Filesystem usage (bytes)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-redis-0')) FACET tuple(podName, containerName) LIMIT 100 TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "BYTES"
+            }
+          }
+        },
+        {
+          "title": "Filesystem utilization",
+          "layout": {
+            "column": 5,
+            "row": 7,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT (max(fsUsedPercent) / 100) AS `Filesystem utilization (%)` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-redis-0')) FACET tuple(podName, containerName) LIMIT 100 TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "PERCENTAGE"
+            }
+          }
+        },
+        {
+          "title": "Restart count",
+          "layout": {
+            "column": 9,
+            "row": 7,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "nrqlQueries": [
+              {
+                "accountId": "3032839",
+                "query": "SELECT sum(restartCountDelta) AS `Restart count` FROM K8sContainerSample WHERE (((clusterName = '${cluster}') AND (namespaceName = {{namespace}})) AND (podName = 'airflow-redis-0')) FACET containerName TIMESERIES AUTO"
+              }
+            ],
+            "thresholds": [],
+            "units": {
+              "unit": "COUNT"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pool Utilization",
+      "description": null,
+      "widgets": [
+        {
+          "title": "default_pool",
+          "layout": {
+            "column": 1,
+            "row": 1,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "legend": {
+              "enabled": true
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  3032839
+                ],
+                "query": "SELECT latest(airflow_pool_running_slots_default_pool) FROM Metric WHERE (clusterName = '${cluster}' OR cluster_name = '${cluster}' OR `k8s.cluster.name` = '${cluster}') AND namespace = {{namespace}} TIMESERIES"
+              },
+              {
+                "accountIds": [
+                  3032839
+                ],
+                "query": "SELECT latest(airflow_pool_queued_slots_default_pool) FROM Metric WHERE (clusterName = '${cluster}' OR cluster_name = '${cluster}' OR `k8s.cluster.name` = '${cluster}') AND namespace = {{namespace}} TIMESERIES"
+              },
+              {
+                "accountIds": [
+                  3032839
+                ],
+                "query": "SELECT latest(airflow_pool_deferred_slots_default_pool) FROM Metric WHERE (clusterName = '${cluster}' OR cluster_name = '${cluster}' OR `k8s.cluster.name` = '${cluster}') AND namespace = {{namespace}} TIMESERIES"
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            },
+            "thresholds": {
+              "isLabelVisible": true,
+              "thresholds": [
+                {
+                  "name": "Capacity",
+                  "severity": "unavailable",
+                  "to": 128
+                }
+              ]
+            },
+            "yAxisLeft": {
+              "zero": true
+            },
+            "yAxisRight": {
+              "zero": true
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variables": [
+    {
+      "name": "namespace",
+      "items": null,
+      "defaultValues": [],
+      "nrqlQuery": null,
+      "title": "Namespace",
+      "type": "STRING",
+      "isMultiSelection": null,
+      "replacementStrategy": "STRING"
+    }
+  ]
+}

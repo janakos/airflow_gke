@@ -1,0 +1,12 @@
+apiVersion: networking.gke.io/v1
+kind: GCPBackendPolicy
+metadata:
+  name: staging-load-backend-policy
+  namespace: staging-load
+spec:
+  default:
+    securityPolicy: staging-airflow-webserver
+  targetRef:
+    group: ""
+    kind: Service
+    name: airflow-webserver

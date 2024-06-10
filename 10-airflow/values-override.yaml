@@ -1,0 +1,29 @@
+workers:
+  extraContainers:
+    - name: dag-sync
+      image: 'us-central1-docker.pkg.dev/iguana/airflow-gke/dag-sync:latest'
+      volumeMounts:
+        - name: dags
+          mountPath: /opt/airflow/dags
+        - name: plugins
+          mountPath: /opt/airflow/plugins
+      env:
+        - name: DAG_BUCKET
+          value: iguana-airflow-dev
+        - name: PATH_PREFIX
+          value: gparton
+
+scheduler:
+  extraContainers:
+    - name: dag-sync
+      image: 'us-central1-docker.pkg.dev/iguana/airflow-gke/dag-sync:latest'
+      volumeMounts:
+        - name: dags
+          mountPath: /opt/airflow/dags
+        - name: plugins
+          mountPath: /opt/airflow/plugins
+      env:
+        - name: DAG_BUCKET
+          value: iguana-airflow-dev
+        - name: PATH_PREFIX
+          value: gparton
